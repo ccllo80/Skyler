@@ -190,6 +190,20 @@ const moderation: BotCommand = {
       return;
     }
 
+    const actorMember = await interaction.guild.members.fetch(interaction.user.id).catch(() => null);
+    if (!isGuildMember(actorMember)) {
+      await interaction.reply({ content: "I could not verify your server permissions.", ephemeral: true });
+      return;
+    }
+
+    if (
+      interaction.user.id !== interaction.guild.ownerId &&
+      actorMember.roles.highest.comparePositionTo(member.roles.highest) <= 0
+    ) {
+      await interaction.reply({ content: "You cannot moderate a member with an equal or higher role than yours.", ephemeral: true });
+      return;
+    }
+
     const botCanAct =
       action === "timeout" ? member.moderatable :
       action === "kick" ? member.kickable :
