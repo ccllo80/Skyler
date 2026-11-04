@@ -10,4 +10,7 @@ async function main(): Promise<void> {
   await client.login(config.discordToken);
 }
 
-void main();
+void main().catch((error: unknown) => {
+  console.error("[Skyler] Failed to start:", error);
+  process.exitCode = 1;
+});
