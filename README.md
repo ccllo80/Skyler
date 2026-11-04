@@ -29,6 +29,11 @@ For production, run `npm run build` then `npm start`.
 | --- | --- |
 | `/ping` | Check bot response and gateway latency. |
 | `/help` | List currently registered commands. |
+| `/mod timeout` | Temporarily timeout a server member (for example, `10m`, `2h`, or `1d`; maximum 28 days). |
+| `/mod kick` | Remove a member from the server. |
+| `/mod ban` | Ban a member from the server. |
+| `/mod unban` | Unban a user by Discord ID. |
+| `/mod purge` | Delete 1–100 recent messages in the current channel; Discord skips messages older than 14 days. |
 
 ## Structure
 
@@ -38,10 +43,15 @@ scripts/
 src/
   client/
   commands/core/
+  commands/moderation/
   config/
   events/
   types/
 ```
+
+## Moderation notes
+
+Moderation actions check the invoking member’s permission for the selected action and verify the bot’s permissions and role hierarchy. Moderation replies are ephemeral. Persistent warnings and configurable moderation logs are intentionally deferred until a suitable storage design is selected.
 
 ## Security
 
