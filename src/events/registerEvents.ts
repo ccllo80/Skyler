@@ -7,6 +7,14 @@ export function registerEvents(client: SkylerClient): void {
     console.info(`[Skyler] Loaded ${client.commands.size} commands`);
   });
 
+  client.on(Events.Error, (error) => {
+    console.error("[Skyler] Discord client error:", error);
+  });
+
+  client.on(Events.Warn, (warning) => {
+    console.warn("[Skyler] Discord client warning:", warning);
+  });
+
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
