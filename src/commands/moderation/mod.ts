@@ -133,19 +133,27 @@ const moderation: BotCommand = {
 
     if (action === "purge") {
       const channel = interaction.channel;
-      if (!channel || !channel.isTextBased() || !("bulkDelete" in channel)) {
+      if (!channel || !channel.isTextBased() || !("bulkDelete" in channel) || !("guild" in channel)) {
         await interaction.reply({ content: "This command is not supported in this channel.", ephemeral: true });
         return;
       }
-      if (!botMember.permissionsIn(channel).has(PermissionFlagsBits.ManageMessages)) {
+      const textChannel = channel as TextChannel;
+      if (!botMember.permissionsIn(textChannel).has(PermissionFlagsBits.ManageMessages)) {
         await interaction.reply({ content: "I need the Manage Messages permission in this channel.", ephemeral: true });
         return;
       }
 
       await interaction.deferReply({ ephemeral: true });
       const amount = interaction.options.getInteger("amount", true);
-      const deleted = await (channel as TextChannel).bulkDelete(amount, true);
-      await interaction.editReply(`Deleted **${deleted.size}** recent messages. Messages older than 14 days are skipped by Discord.`);
+      const deletedCount = amount === 1
+        ? await textChannel.messages.fetch({ limit: 1 }).then(async (messages) => {
+            const latestMessage = messages.first();
+            if (!latestMessage) return 0;
+            await latestMessage.delete();
+            return 1;
+          })
+        : (await textChannel.bulkDelete(amount, true)).size;
+      await interaction.editReply(`Deleted **${deletedCount}** recent messages. Messages older than 14 days are skipped by Discord.`);
       return;
     }
 
