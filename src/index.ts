@@ -7,6 +7,15 @@ async function main(): Promise<void> {
   const client = createClient();
   registerCommands(client);
   registerEvents(client);
+
+  const shutdown = (signal: NodeJS.Signals): void => {
+    console.info(`[Skyler] Received ${signal}. Shutting down...`);
+    client.destroy();
+  };
+
+  process.once("SIGINT", () => shutdown("SIGINT"));
+  process.once("SIGTERM", () => shutdown("SIGTERM"));
+
   await client.login(config.discordToken);
 }
 
