@@ -14,4 +14,7 @@ async function deployCommands(): Promise<void> {
   console.info("[Skyler] Slash commands deployed successfully.");
 }
 
-void deployCommands();
+void deployCommands().catch((error: unknown) => {
+  console.error("[Skyler] Failed to deploy slash commands:", error);
+  process.exitCode = 1;
+});
