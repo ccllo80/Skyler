@@ -1,0 +1,30 @@
+name: Deploy Discord Commands
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Register slash commands
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      DEV_GUILD_ID: ${{ secrets.DEV_GUILD_ID }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Deploy slash commands
+        run: npm run deploy:commands
