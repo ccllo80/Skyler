@@ -1,0 +1,26 @@
+{
+  "name": "skyler",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A modular Discord bot foundation.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/index.js",
+    "deploy:commands": "tsx scripts/deploy-commands.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
