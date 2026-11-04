@@ -41,7 +41,6 @@ const moderation: BotCommand = {
   data: new SlashCommandBuilder()
     .setName("mod")
     .setDescription("Server moderation tools")
-    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addSubcommand((subcommand) =>
       subcommand
         .setName("timeout")
@@ -125,7 +124,7 @@ const moderation: BotCommand = {
       return;
     }
 
-    const reason = getReason(interaction);
+    const reason = action === "purge" ? "Bulk message cleanup" : getReason(interaction);
     const botMember = interaction.guild.members.me;
     if (!botMember) {
       await interaction.reply({ content: "I could not verify my permissions in this server.", ephemeral: true });
