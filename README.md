@@ -21,6 +21,8 @@ A modular, extensible Discord bot foundation. Features are built as independent 
 6. Run `npm run deploy:commands`.
 7. Start locally with `npm run dev`.
 
+To deploy slash commands through GitHub Actions, add `DISCORD_TOKEN` and `CLIENT_ID` as repository Actions secrets. Add `DEV_GUILD_ID` as an optional secret for instant guild-scoped updates, then run the **Deploy Discord Commands** workflow manually from the Actions tab.
+
 For production, run `npm run build` then `npm start`.
 
 ## Commands
@@ -51,7 +53,7 @@ src/
 
 ## Moderation notes
 
-Moderation actions check the invoking member’s permission for the selected action and verify the bot’s permissions and role hierarchy. Moderation replies are ephemeral. Persistent warnings and configurable moderation logs are intentionally deferred until a suitable storage design is selected.
+Moderation actions check the invoking member’s permission for the selected action, the moderator’s role hierarchy, and the bot’s permissions and role hierarchy. Moderation replies are ephemeral. Persistent warnings and configurable moderation logs are intentionally deferred until a suitable storage design is selected.
 
 ## Security
 
