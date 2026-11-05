@@ -4,10 +4,10 @@ import type { BotCommand } from "../../types/command.js";
 const ping: BotCommand = {
   data: new SlashCommandBuilder()
     .setName("ping")
-    .setDescription("Check whether Skyler is responding."),
+    .setDescription("فحص استجابة البوت."),
   async execute(interaction, client) {
     await interaction.reply({
-      content: `Pong! Gateway latency: ${client.ws.ping}ms`,
+      content: `Pong! سرعة استجابة البوابة: ${client.ws.ping}ms`,
       flags: MessageFlags.Ephemeral,
     });
   },
