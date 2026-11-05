@@ -2,6 +2,7 @@ import {
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
+  type SlashCommandOptionsOnlyBuilder,
   type ChatInputCommandInteraction,
   type GuildMember,
   type TextChannel,
@@ -64,11 +65,11 @@ async function fetchTargetMember(interaction: ChatInputCommandInteraction, clien
   return member;
 }
 
-function memberOption(builder: SlashCommandBuilder): SlashCommandBuilder {
+function memberOption(builder: SlashCommandOptionsOnlyBuilder): SlashCommandOptionsOnlyBuilder {
   return builder.addUserOption((option) => option.setName("العضو").setDescription("العضو المطلوب").setRequired(true));
 }
 
-function reasonOption(builder: SlashCommandBuilder): SlashCommandBuilder {
+function reasonOption(builder: SlashCommandOptionsOnlyBuilder): SlashCommandOptionsOnlyBuilder {
   return builder.addStringOption((option) => option.setName("السبب").setDescription("سبب الإجراء").setMaxLength(500));
 }
 
