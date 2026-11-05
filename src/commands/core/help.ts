@@ -4,7 +4,7 @@ import type { BotCommand } from "../../types/command.js";
 const help: BotCommand = {
   data: new SlashCommandBuilder()
     .setName("help")
-    .setDescription("Show the commands currently available in Skyler."),
+    .setDescription("عرض قائمة أوامر Skyler."),
   async execute(interaction, client) {
     const commandList = [...client.commands.values()]
       .map((command) => `/${command.data.name} — ${command.data.description}`)
@@ -12,8 +12,8 @@ const help: BotCommand = {
 
     await interaction.reply({
       content: commandList.length
-        ? `**Skyler commands**\n${commandList.join("\n")}`
-        : "No commands are currently registered.",
+        ? `**أوامر Skyler**\n${commandList.join("\n")}`
+        : "ماكو أوامر مسجلة حالياً.",
       flags: MessageFlags.Ephemeral,
     });
   },
