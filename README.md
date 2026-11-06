@@ -55,7 +55,7 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 | `/تحذير` | `العضو`, `السبب` | Add a persistent warning to a member. |
 | `/تحذيرات` | `العضو` | Show the member's warning history. |
 | `/إزالة-تحذير` | `العضو`, `رقم-التحذير` | Remove one warning by its ID. |
-| `/مسح-تحذيرات` | `العضو` | Clear all warnings for a member. |
+| `/مسح-تحذيرات` | `العضو` | Clear all warnings for a member. |\n| `/قفل` | — | Prevent @everyone from sending messages in the current text channel. |\n| `/فتح` | — | Remove the @everyone send-message deny in the current text channel, returning to inherited channel permissions. |
 
 Multi-word command names use a hyphen because slash-command names cannot contain spaces.
 
