@@ -7,7 +7,8 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 - Modular slash-command and event registration.
 - `/ping` and `/help`.
 - Standalone moderation commands; there is no `/mod` or `/ادارة` command.
-- Environment-based configuration. Secrets are excluded from Git.
+- Persistent warning records stored locally in `data/warnings.json`.
+- Environment-based configuration. Secrets and runtime warning data are excluded from Git.
 
 ## Requirements
 
@@ -52,6 +53,10 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 | `/باند` | `العضو` | Ban a member. Optional: `السبب`. |
 | `/رفع-باند` | `ايدي` | Unban a user by Discord ID. Optional: `السبب`. |
 | `/حذف` | `العدد` | Delete 1–100 recent messages in the current channel. Messages older than 14 days are skipped by Discord's bulk-delete behavior. |
+| `/تحذير` | `العضو`, `السبب` | Add a persistent warning to a member. |
+| `/تحذيرات` | `العضو` | Show the member's warning history. |
+| `/إزالة-تحذير` | `العضو`, `رقم-التحذير` | Remove one warning by its ID. |
+| `/مسح-تحذيرات` | `العضو` | Clear all warnings for a member. |
 
 Multi-word command names use a hyphen because slash-command names cannot contain spaces.
 
@@ -67,23 +72,27 @@ src/
     moderation/
   config/
   events/
+  storage/
   types/
+data/                 # Runtime data; ignored by Git
 ```
 
 ## Moderation behavior
 
 - Each action checks the invoking member's relevant permission.
-- The bot checks its own permissions and role hierarchy.
+- The bot checks its own permissions and role hierarchy for moderation actions.
 - Members cannot target themselves or the bot.
 - Moderators cannot target members with an equal or higher role, unless the moderator is the server owner.
 - Moderation responses are ephemeral.
-- Persistent warnings and configurable moderation logs are deferred until a storage design is chosen.
+- Warning records include the guild, member, moderator, reason, timestamp, and a unique warning ID.
+- Warning data is written atomically to `data/warnings.json` and survives bot restarts as long as that data directory is retained by the host.
+- Back up `data/warnings.json` before moving hosts or resetting the application disk. A future database adapter can replace this local JSON storage without changing the slash-command interface.
 
 ## Security
 
-- Never commit `.env`, bot tokens, API keys, passwords, or private user data.
+- Never commit `.env`, bot tokens, API keys, passwords, private user data, or runtime warning records.
 - Keep real credentials only in local environment configuration or a trusted secrets manager.
-- `.env` and other `.env.*` files are ignored by Git; `.env.example` contains placeholders only.
+- `.env`, other `.env.*` files, and `data/` are ignored by Git; `.env.example` contains placeholders only.
 
 ## Architecture direction
 
