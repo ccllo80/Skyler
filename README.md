@@ -5,6 +5,7 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 ## Current features
 
 - Modular slash-command and event registration.
+- Global slash-command deployment only; no per-server command registration.
 - `/ping` and `/help`.
 - Standalone moderation commands; there is no `/mod` or `/ادارة` command.
 - Persistent warning records stored locally in `data/warnings.json`.
@@ -24,13 +25,11 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
    npm install
    ```
 
-2. Copy `.env.example` to `.env` and set the values locally:
-
+2. Copy `.env.example` to `.env` and set:
    - `DISCORD_TOKEN`
    - `CLIENT_ID`
-   - `DEV_GUILD_ID` (optional; use a development server for faster command updates)
 
-3. Register slash commands:
+3. Register the global slash commands:
 
    ```bash
    npm run deploy:commands
