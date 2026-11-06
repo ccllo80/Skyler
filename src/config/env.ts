@@ -9,5 +9,4 @@ function requiredEnv(name: string): string {
 export const config = {
   discordToken: requiredEnv("DISCORD_TOKEN"),
   clientId: requiredEnv("CLIENT_ID"),
-  devGuildId: process.env.DEV_GUILD_ID?.trim() || undefined,
 } as const;
