@@ -1,64 +1,90 @@
 # Skyler
 
-A modular, extensible Discord bot foundation. Features are built as independent systems so the project can evolve without locking into one hosting provider or database.
+A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 
-## Current foundation
+## Current features
 
-- TypeScript on Node.js 22+
-- Discord.js client with minimum required Gateway Intent
-- Modular slash-command and event registration
-- `/ping` and `/help` commands
-- Separate slash-command deployment script
-- Environment-based configuration; secrets are excluded from Git
+- Modular slash-command and event registration.
+- `/ping` and `/help`.
+- Standalone moderation commands; there is no `/mod` or `/ادارة` command.
+- Environment-based configuration. Secrets are excluded from Git.
 
-## Setup
+## Requirements
 
-1. Install Node.js 22 or newer.
-2. Run `npm install`.
-3. Copy `.env.example` to `.env`.
-4. Set `DISCORD_TOKEN` and `CLIENT_ID` in `.env`.
-5. Optionally set `DEV_GUILD_ID` for faster development command updates.
-6. Run `npm run deploy:commands`.
-7. Start locally with `npm run dev`.
+- Node.js 22 or newer.
+- npm.
+- A Discord application and bot.
 
-To deploy slash commands through GitHub Actions, add `DISCORD_TOKEN` and `CLIENT_ID` as repository Actions secrets. Add `DEV_GUILD_ID` as an optional secret for instant guild-scoped updates, then run the **Deploy Discord Commands** workflow manually from the Actions tab.
+## Local setup
 
-For production, run `npm run build` then `npm start`.
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env` and set the values locally:
+
+   - `DISCORD_TOKEN`
+   - `CLIENT_ID`
+   - `DEV_GUILD_ID` (optional; use a development server for faster command updates)
+
+3. Register slash commands:
+
+   ```bash
+   npm run deploy:commands
+   ```
+
+4. Start the bot in development mode:
+
+   ```bash
+   npm run dev
+   ```
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| `/ping` | Check bot response and gateway latency. |
-| `/help` | List currently registered commands. |
-| `/mod timeout` | Temporarily timeout a server member (for example, `10m`, `2h`, or `1d`; maximum 28 days). |
-| `/mod kick` | Remove a member from the server. |
-| `/mod ban` | Ban a member from the server. |
-| `/mod unban` | Unban a user by Discord ID. |
-| `/mod purge` | Delete 1–100 recent messages in the current channel; Discord skips messages older than 14 days. |
+| Command | Required options | Purpose |
+| --- | --- | --- |
+| `/ping` | — | Check the bot's gateway latency. |
+| `/help` | — | List the available commands. |
+| `/تايم-اوت` | `العضو`, `المدة` | Timeout a member. Duration examples: `10m`, `2h`, `1d`, `1w`; maximum 28 days. Optional: `السبب`. |
+| `/طرد` | `العضو` | Kick a member. Optional: `السبب`. |
+| `/باند` | `العضو` | Ban a member. Optional: `السبب`. |
+| `/رفع-باند` | `ايدي` | Unban a user by Discord ID. Optional: `السبب`. |
+| `/حذف` | `العدد` | Delete 1–100 recent messages in the current channel. Messages older than 14 days are skipped by Discord's bulk-delete behavior. |
 
-## Structure
+Multi-word command names use a hyphen because slash-command names cannot contain spaces.
+
+## Project structure
 
 ```text
 scripts/
   deploy-commands.ts
 src/
   client/
-  commands/core/
-  commands/moderation/
+  commands/
+    core/
+    moderation/
   config/
   events/
   types/
 ```
 
-## Moderation notes
+## Moderation behavior
 
-Moderation actions check the invoking member’s permission for the selected action, the moderator’s role hierarchy, and the bot’s permissions and role hierarchy. Moderation replies are ephemeral. Persistent warnings and configurable moderation logs are intentionally deferred until a suitable storage design is selected.
+- Each action checks the invoking member's relevant permission.
+- The bot checks its own permissions and role hierarchy.
+- Members cannot target themselves or the bot.
+- Moderators cannot target members with an equal or higher role, unless the moderator is the server owner.
+- Moderation responses are ephemeral.
+- Persistent warnings and configurable moderation logs are deferred until a storage design is chosen.
 
 ## Security
 
-Never commit `.env`, bot tokens, API keys, passwords, or private user data. Configure production secrets through the hosting provider environment settings.
+- Never commit `.env`, bot tokens, API keys, passwords, or private user data.
+- Keep real credentials only in local environment configuration or a trusted secrets manager.
+- `.env` and other `.env.*` files are ignored by Git; `.env.example` contains placeholders only.
 
 ## Architecture direction
 
-Future systems will be added as independent modules. Database, hosting, and technology choices remain open and will be selected according to each subsystem’s needs.
+Future systems will be added as independent modules. Hosting and database choices remain open until the bot's features and requirements are complete.
