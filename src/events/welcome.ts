@@ -1,10 +1,10 @@
-import { Events, type GuildMember, type TextChannel, type NewsChannel } from "discord.js";
+import { Events, type GuildMember, type PartialGuildMember, type TextChannel, type NewsChannel } from "discord.js";
 import type { SkylerClient } from "../types/client.js";
 import { getWelcomeSettings, renderWelcomeMessage } from "../storage/welcome.js";
 
 type SendableChannel = TextChannel | NewsChannel;
 
-async function sendMemberMessage(member: GuildMember, kind: "welcome" | "leave"): Promise<void> {
+async function sendMemberMessage(member: GuildMember | PartialGuildMember, kind: "welcome" | "leave"): Promise<void> {
   try {
     const settings = await getWelcomeSettings(member.guild.id);
     const enabled = kind === "welcome" ? settings.welcomeEnabled : settings.leaveEnabled;
