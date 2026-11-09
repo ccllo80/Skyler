@@ -136,7 +136,8 @@ async function listAvailableChannels(guild: Guild): Promise<{ id: string; name: 
       if (!channel || !channel.isTextBased() || channel.isThread() || !("send" in channel)) return false;
       const permissions = channel.permissionsFor(botMember);
       return Boolean(
-        permissions?.has(PermissionFlagsBits.ViewChannel) &&
+        permissions &&
+          permissions.has(PermissionFlagsBits.ViewChannel) &&
           permissions.has(PermissionFlagsBits.SendMessages),
       );
     })
