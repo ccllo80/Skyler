@@ -3,7 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import {
   PermissionFlagsBits,
   type Guild,
-  type GuildBasedChannel,
+  type NonThreadGuildBasedChannel,
   type NewsChannel,
   type TextChannel,
 } from "discord.js";
@@ -106,7 +106,7 @@ async function getSendableChannel(
   guild: Guild,
   channelId: string,
 ): Promise<SendableChannel> {
-  let channel: GuildBasedChannel | null;
+  let channel: NonThreadGuildBasedChannel | null;
   try {
     channel = await guild.channels.fetch(channelId);
   } catch {
@@ -132,7 +132,7 @@ async function listAvailableChannels(guild: Guild): Promise<{ id: string; name: 
   const channels = await guild.channels.fetch();
   const botMember = guild.members.me ?? (await guild.members.fetchMe());
   return [...channels.values()]
-    .filter((channel): channel is GuildBasedChannel => {
+    .filter((channel): channel is NonThreadGuildBasedChannel => {
       if (!channel || !channel.isTextBased() || channel.isThread() || !("send" in channel)) return false;
       const permissions = channel.permissionsFor(botMember);
       return Boolean(
