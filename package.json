@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/index.js",
     "deploy:commands": "tsx scripts/deploy-commands.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test src/storage/welcome.test.ts"
   },
   "dependencies": {
     "discord.js": "^14.19.3",
