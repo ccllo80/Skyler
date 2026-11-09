@@ -10,7 +10,6 @@ import {
 import type { SkylerClient } from "../types/client.js";
 import { config } from "../config/env.js";
 import {
-  getDefaultWelcomeSettings,
   getWelcomeSettings,
   saveWelcomeSettings,
   type WelcomeSettings,
@@ -71,14 +70,6 @@ function isSnowflake(value: unknown): value is string {
 
 function parseSettings(value: unknown): WelcomeSettings {
   if (!isRecord(value)) throw new ApiError("بيانات الإعدادات غير صالحة.", 400);
-  const fields = [
-    "welcomeEnabled",
-    "welcomeChannelId",
-    "welcomeMessage",
-    "leaveEnabled",
-    "leaveChannelId",
-    "leaveMessage",
-  ] as const;
   if (
     typeof value.welcomeEnabled !== "boolean" ||
     (value.welcomeChannelId !== null && !isSnowflake(value.welcomeChannelId)) ||
@@ -93,7 +84,6 @@ function parseSettings(value: unknown): WelcomeSettings {
   ) {
     throw new ApiError("تحقق من القنوات ونصوص الرسائل؛ الحد الأقصى للنص 1800 حرف.", 400);
   }
-  void fields;
   return {
     welcomeEnabled: value.welcomeEnabled,
     welcomeChannelId: value.welcomeChannelId as string | null,
@@ -129,7 +119,8 @@ async function getSendableChannel(
   const botMember = guild.members.me ?? (await guild.members.fetchMe());
   const permissions = channel.permissionsFor(botMember);
   if (
-    !permissions?.has(PermissionFlagsBits.ViewChannel) ||
+    !permissions ||
+    !permissions.has(PermissionFlagsBits.ViewChannel) ||
     !permissions.has(PermissionFlagsBits.SendMessages)
   ) {
     throw new ApiError("لا يملك البوت صلاحية عرض القناة وإرسال الرسائل فيها.", 403);
@@ -203,7 +194,7 @@ async function handleRequest(
       if (!isRecord(body) || (body.kind !== "welcome" && body.kind !== "leave")) {
         throw new ApiError("نوع رسالة الاختبار غير صالح.", 400);
       }
-      const settings = await getWelcomeSettings(guildId);
+      const settings = parseSettings(body.settings);
       const kind = body.kind;
       const enabled = kind === "welcome" ? settings.welcomeEnabled : settings.leaveEnabled;
       const channelId = kind === "welcome" ? settings.welcomeChannelId : settings.leaveChannelId;
