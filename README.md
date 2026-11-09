@@ -6,10 +6,11 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 
 - Modular slash-command and event registration.
 - Global slash-command deployment only; no per-server command registration.
-- `/ping` and `/help`.
-- Standalone moderation commands; there is no `/mod` or `/ادارة` command.
-- Persistent warning records stored locally in `data/warnings.json`.
-- Environment-based configuration. Secrets and runtime warning data are excluded from Git.
+- /ping and /help.
+- Standalone moderation commands and persistent warning records.
+- Welcome and departure messages configurable per server from the dashboard.
+- A private HTTP API for authenticated dashboard-to-bot communication.
+- Environment-based configuration. Secrets and runtime data are excluded from Git.
 
 ## Requirements
 
@@ -21,78 +22,51 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
 
 1. Install dependencies:
 
-   ```bash
+   ```
    npm install
    ```
 
-2. Copy `.env.example` to `.env` and set:
-   - `DISCORD_TOKEN`
-   - `CLIENT_ID`
+2. Copy .env.example to .env and set DISCORD_TOKEN, CLIENT_ID, and a long random SKYLER_API_SECRET.
 
-3. Register the global slash commands:
+3. In the Discord Developer Portal, enable **Server Members Intent** under Bot → Privileged Gateway Intents.
 
-   ```bash
+4. Register the global slash commands:
+
+   ```
    npm run deploy:commands
    ```
 
-4. Start the bot in development mode:
+5. Start the bot:
 
-   ```bash
+   ```
    npm run dev
    ```
 
-## Commands
+The private API listens on the host-provided PORT or port 3000. It is disabled when SKYLER_API_SECRET is not configured.
 
-| Command | Required options | Purpose |
-| --- | --- | --- |
-| `/ping` | — | Check the bot's gateway latency. |
-| `/help` | — | List the available commands. |
-| `/تايم-اوت` | `العضو`, `المدة` | Timeout a member. Duration examples: `10m`, `2h`, `1d`, `1w`; maximum 28 days. Optional: `السبب`. |
-| `/طرد` | `العضو` | Kick a member. Optional: `السبب`. |
-| `/باند` | `العضو` | Ban a member. Optional: `السبب`. |
-| `/رفع-باند` | `ايدي` | Unban a user by Discord ID. Optional: `السبب`. |
-| `/حذف` | `العدد` | Delete 1–100 recent messages in the current channel. Messages older than 14 days are skipped by Discord's bulk-delete behavior. |
-| `/تحذير` | `العضو`, `السبب` | Add a persistent warning to a member. |
-| `/تحذيرات` | `العضو` | Show the member's warning history. |
-| `/إزالة-تحذير` | `العضو`, `رقم-التحذير` | Remove one warning by its ID. |
-| `/مسح-تحذيرات` | `العضو` | Clear all warnings for a member. |\n| `/قفل` | — | Prevent @everyone from sending messages in the current text channel. |\n| `/فتح` | — | Remove the @everyone send-message deny in the current text channel, returning to inherited channel permissions. |
+## Welcome system
 
-Multi-word command names use a hyphen because slash-command names cannot contain spaces.
+Each server has independent welcome and departure settings. The bot stores them in data/welcome/<guild-id>.json and writes changes atomically.
 
-## Project structure
+Supported message placeholders:
 
-```text
-scripts/
-  deploy-commands.ts
-src/
-  client/
-  commands/
-    core/
-    moderation/
-  config/
-  events/
-  storage/
-  types/
-data/                 # Runtime data; ignored by Git
-```
+- {user} — mention the member.
+- {username} — member username.
+- {server} — server name.
+- {memberCount} — current member count.
+- {userId} — member Discord ID.
+- {serverId} — server Discord ID.
 
-## Moderation behavior
+The bot only lists channels where it has permission to view and send messages. Message mentions are restricted to the member placeholder; arbitrary role and everyone mentions are not allowed.
 
-- Each action checks the invoking member's relevant permission.
-- The bot checks its own permissions and role hierarchy for moderation actions.
-- Members cannot target themselves or the bot.
-- Moderators cannot target members with an equal or higher role, unless the moderator is the server owner.
-- Moderation responses are ephemeral.
-- Warning records include the guild, member, moderator, reason, timestamp, and a unique warning ID.
-- Warning data is written atomically to `data/warnings.json` and survives bot restarts as long as that data directory is retained by the host.
-- Back up `data/warnings.json` before moving hosts or resetting the application disk. A future database adapter can replace this local JSON storage without changing the slash-command interface.
+## Storage and backups
+
+Welcome settings and moderation warnings are stored on the bot host's local disk. They survive restarts only while the host retains its application data. Back up the data/ directory before moving hosts or resetting the application disk.
 
 ## Security
 
-- Never commit `.env`, bot tokens, API keys, passwords, private user data, or runtime warning records.
-- Keep real credentials only in local environment configuration or a trusted secrets manager.
-- `.env`, other `.env.*` files, and `data/` are ignored by Git; `.env.example` contains placeholders only.
-
-## Architecture direction
-
-Future systems will be added as independent modules. Hosting and database choices remain open until the bot's features and requirements are complete.
+- Never commit .env, bot tokens, API secrets, passwords, or runtime data.
+- Keep the same strong SKYLER_API_SECRET in the bot host and dashboard server environment.
+- Set the dashboard's SKYLER_API_BASE_URL to the bot's HTTPS base URL.
+- The dashboard calls the bot API from server-side functions; the API secret is never sent to the browser.
+- Keep the bot API behind HTTPS when it is reachable over the public internet.
