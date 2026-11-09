@@ -36,7 +36,13 @@ A modular Discord bot built with TypeScript, Node.js 22+, and discord.js.
    npm run deploy:commands
    ```
 
-5. Start the bot:
+5. Run the focused welcome tests when changing the system:
+
+   ```
+   npm test
+   ```
+
+6. Start the bot:
 
    ```
    npm run dev
