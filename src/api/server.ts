@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import {
   PermissionFlagsBits,
   type Guild,
+  type GuildBasedChannel,
   type NonThreadGuildBasedChannel,
   type NewsChannel,
   type TextChannel,
@@ -106,7 +107,7 @@ async function getSendableChannel(
   guild: Guild,
   channelId: string,
 ): Promise<SendableChannel> {
-  let channel: NonThreadGuildBasedChannel | null;
+  let channel: GuildBasedChannel | null;
   try {
     channel = await guild.channels.fetch(channelId);
   } catch {
