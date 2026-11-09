@@ -210,7 +210,7 @@ async function handleRequest(
         server: guild.name,
         memberCount: guild.memberCount,
         serverId: guild.id,
-      }).replace(`<@${client.user!.id}>`, "@عضو تجريبي");
+      }).replaceAll(`<@${client.user!.id}>`, "@عضو تجريبي");
       await channel.send({ content, allowedMentions: { parse: [], users: [], roles: [] } });
       sendJson(response, 200, { sent: true });
       return;
